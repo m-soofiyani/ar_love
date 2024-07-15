@@ -23,7 +23,6 @@
                     id="animated-asset"
                     src="assets/asset.gltf"
                 ></a-asset-item>
-                <audio id="background-music" src="Dance.mp3" loop preload="auto"></audio>
             </a-assets>
 
             <a-marker
@@ -34,11 +33,10 @@
                 raycaster="objects: .clickable"
                 emitevents="true"
                 cursor="fuse: false; rayOrigin: mouse;"
-                id="markerA"
             >
                 <a-entity
                     id="bowser-model"
-                    scale="0.41829733708816225 0.41829733708816225 0.41829733708816225"
+                    scale="0.8365946741763248 0.8365946741763248 0.8365946741763248"
                     animation-mixer="loop: repeat"
                     gltf-model="#animated-asset"
                     class="clickable"
@@ -49,17 +47,29 @@
             <a-entity camera></a-entity>
         </a-scene>
         
+        <!-- Add the audio element -->
+        <audio id="background-music" src="Dance.mp3" loop></audio>
+        
         <script>
             window.addEventListener('DOMContentLoaded', () => {
                 const audio = document.getElementById('background-music');
                 const marker = document.getElementById('animated-marker');
 
                 marker.addEventListener('markerFound', () => {
-                    audio.play().then(() => {
-                        console.log('Audio started playing.');
-                    }).catch((error) => {
-                        console.log('Autoplay prevented:', error);
+                    audio.play().catch(error => {
+                        console.log('Autoplay prevented, music will play on first user interaction.');
+
+                        // Play music on user interaction
+                        document.addEventListener('click', () => {
+                            if (audio.paused) {
+                                audio.play();
+                            }
+                        }, { once: true });
                     });
+                });
+
+                marker.addEventListener('markerLost', () => {
+                    audio.pause();
                 });
             });
         </script>
